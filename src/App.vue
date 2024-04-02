@@ -8,7 +8,9 @@ auth.getUser();
 <template>
   <MainNav></MainNav>
   <div class="container">
-    <RouterView></RouterView>
+    <Suspense>
+      <RouterView></RouterView>
+    </Suspense>
   </div>
 </template>
 

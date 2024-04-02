@@ -5,6 +5,7 @@ export const useChatStore = defineStore('chat', {
     state: () => {
         return {
             messages: [],
+            ws: null,
         }
     },
     actions: {
@@ -21,11 +22,30 @@ export const useChatStore = defineStore('chat', {
                 this.messages.push(...response.data);
             });
         },
+        websocket(){
+            if(this.ws){
+                return;
+            }
+            // Create WebSocket connection.
+            this.ws = new WebSocket("ws://localhost:8080");
+
+            // Connection opened
+            this.ws.addEventListener("open", (event) => {
+            //socket.send("Hello Server!");
+            });
+
+            // Listen for messages
+            this.ws.addEventListener("message", (event) => {
+                console.log("Message from server ", event.data);
+                this.messages.push(JSON.parse(event.data));
+            });
+        },
         sendMessage(message){
             api.post('/api/messages', {
                 message: message
             }).then(response => {
                 this.messages.push(response.data);
+                this.ws.send(JSON.stringify(response.data));
             });
         }
     }
